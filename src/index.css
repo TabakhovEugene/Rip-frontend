@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.breadcrumbs {
+    display: flex;
+    justify-content: center; /* Центрирование */
+    margin-bottom: 20px; /* Отступ снизу */
+    color: white; /* Цвет текста */
+}
+
+.breadcrumbs a {
+    color: #00A88E; /* Цвет ссылок */
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.breadcrumbs span {
+    color: white; /* Цвет разделителей */
+}
