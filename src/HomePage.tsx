@@ -1,9 +1,8 @@
 import Navbar from "./components/Navbar.tsx";
-import { Link } from "react-router-dom";
 
 function HomePage() {
     return (
-        <div className="w-full h-screen bg-cover bg-center bg-background flex flex-col">
+        <div className="w-full h-screen bg-cover bg-center bg-[url('./assets/background.jpg')] flex flex-col">
             {/* Header */}
             <Navbar />
 
@@ -13,20 +12,20 @@ function HomePage() {
                 <p className="text-white mb-6 max-w-md">
                     Исследуйте природные заповедники, редкие экосистемы и места обитания дикой природы, чтобы лучше понять и сохранить наше природное наследие.
                 </p>
-                <div className="space-x-4">
-                    <Link
-                        to="/habitats"
-                        className="px-6 py-2 bg-green-700 text-white rounded-md hover:bg-green-800"
-                    >
-                        Места обитания
-                    </Link>
-                    <Link
-                        to={`/animals`}
-                        className="pointer-events-none px-6 py-2 bg-green-700 text-white rounded-md hover:bg-green-800"
-                    >
-                        Сформированные заявки
-                    </Link>
-                </div>
+                {/*<div className="space-x-4">*/}
+                {/*    <Link*/}
+                {/*        to="/habitats"*/}
+                {/*        className="px-6 py-2 bg-green-700 text-white rounded-md hover:bg-green-800"*/}
+                {/*    >*/}
+                {/*        Места обитания*/}
+                {/*    </Link>*/}
+                {/*    <Link*/}
+                {/*        to={`/animals`}*/}
+                {/*        className="pointer-events-none px-6 py-2 bg-green-700 text-white rounded-md hover:bg-green-800"*/}
+                {/*    >*/}
+                {/*        Сформированные заявки*/}
+                {/*    </Link>*/}
+                {/*</div>*/}
             </main>
         </div>
     );

@@ -1,11 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Breadcrumbs = ({ path }) => {
+interface BreadcrumbsProps {
+    path: string;
+}
+
+interface PathNames {
+    [key: string]: string;
+}
+
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ path }) => {
     const paths = path.split('/').filter(Boolean);
 
     // Соответствие между путями и их читаемыми именами
-    const pathNames = {
+    const pathNames: PathNames = {
         habitats: 'Услуги',
         // Добавьте другие соответствия по мере необходимости
     };

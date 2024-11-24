@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'background': "url('http://127.0.0.1:9000/test/background.jpg')",
+        'background': "url('./assets/background.jpg')",
       },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
