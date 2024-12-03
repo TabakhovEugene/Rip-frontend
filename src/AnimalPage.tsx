@@ -1,167 +1,248 @@
-// import {useNavigate, useParams} from "react-router-dom";
-// import {useEffect, useState} from "react";
-// import Navbar from "./components/Navbar.tsx";
-//
-//
-// const mockAnimal = [
-//     {
-//         animalId: '1',
-//         habitats: [
-//             {
-//                 pk: '1',
-//                 title: 'Евразия',
-//                 population: 15000,
-//                 description: 'Краткое описание Евразии.',
-//                 picture_url: 'http://127.0.0.1:9000/test/Евразия.jpg'
-//
-//             },
-//             {
-//                 pk: '2',
-//                 title: 'Австралия',
-//                 population: 12000,
-//                 description: 'Краткое описание Австралия.',
-//                 picture_url: 'http://127.0.0.1:9000/test/Австралия.jpg'
-//             },
-//         ],
-//     },
-// ];
-//
-// const AnimalPage = () => {
-//     const navigate = useNavigate();
-//     const {animalId} = useParams();
-//     const [currentHabitats, setCurrentHabitats] = useState([]);
-//     const [loading, setLoading] = useState(true); // Для состояния загрузки
-//     const [errorMessage, setErrorMessage] = useState(''); // Для обработки ошибок
-//
-//     const fetchAnimalData = async () => {
-//         if (!animalId) {
-//             setLoading(false); // Если reqId не установлен, выходим из функции
-//             return;
-//         }
-//
-//         try {
-//             const response = await fetch(`/api/animal/${animalId}/`);
-//
-//             if (!response.ok) {
-//                 throw new Error('Ошибка загрузки данных! Заявка не активна или необходимо авторизоваться!');
-//             }
-//
-//             const animalData = await response.json();
-//             setCurrentHabitats(animalData.habitats); // Устанавливаем угрозы из ответа
-//         } catch (err) {
-//             // Если произошла ошибка, используем мок-данные только если нет соединения
-//             const mockAni = mockAnimal.find(animal => animal.animalId === animalId);
-//
-//             if (mockAni) {
-//                 setCurrentHabitats(mockAni.habitats);
-//             } else {
-//                 setErrorMessage('Заявка не найдена');
-//             }
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-//
-//
-//     useEffect(() => {
-//         fetchAnimalData();
-//     }, [animalId]);
-//
-//     const handleDelete = async (animalId) => {
-//         if (!animalId) return; // Если reqId не установлен, ничего не делаем
-//
-//         try {
-//             const response = await fetch(`/api/delete-animal/${animalId}/`, {
-//                 method: 'DELETE',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     // 'X-CSRFToken': getCsrfToken() // добавьте CSRF токен, если используете Django
-//                 },
-//                 // body: JSON.stringify({ animal_id: animalId })
-//             });
-//             if (response.ok) {
-//                 // alert('Запрос успешно удален');
-//                 setCurrentHabitats([]);
-//                 navigate('/habitats');// Очищаем угрозы после удаления
-//             } else {
-//                 alert('Ошибка при удалении запроса');
-//             }
-//         } catch (error) {
-//             console.error('Ошибка:', error);
-//         }
-//     };
-//
-//     return(
-//         <div className="bg-[#060F1E] font-roboto bg-fixed">
-//             <Navbar/>
-//             <h1 className="flex justify-center font-roboto font-bold text-5xl text-white mt-12">
-//                 РЕГИСТРАЦИЯ НОВОГО ВИДА ЖИВОТНОГО
-//             </h1>
-//
-//             <div className="flex flex-col items-center my-12 font-roboto">
-//                 <div className="w-5/6">
-//                     <select className="rounded-md p-2 w-full">
-//                         <option>Олень Северный</option>
-//                         {/*{data.types.map((type, index) => (*/}
-//                         {/*    <option key={index}>{type}</option>*/}
-//                         {/*))}*/}
-//                     </select>
-//                 </div>
-//
-//                 <div className="w-5/6 mt-5">
-//                     <select className="rounded-md p-2 w-full">
-//                         <option>Олени</option>
-//                         {/*{data.genuses.map((genus, index) => (*/}
-//                         {/*    <option key={index}>{genus}</option>*/}
-//                         {/*))}*/}
-//                     </select>
-//                 </div>
-//             </div>
-//
-//             <div className="flex justify-center">
-//                 <ul className="w-full p-0 list-none flex flex-col items-center">
-//                     {currentHabitats.length > 0 ? (
-//                         currentHabitats.map((habitat, index) => (
-//                             <li
-//                                 key={index}
-//                                 className="shadow-md transition-all duration-300 rounded-md border w-1/3 h-50 my-5 bg-white text-decoration-none flex items-start"
-//                             >
-//                                 <img
-//                                     className="h-48 w-64 object-cover rounded-l-md"
-//                                     src={habitat.picture_url}
-//                                     alt="habitat img"
-//                                 />
-//                                 <div className="flex flex-col ml-5 mt-5">
-//                                     <a
-//                                         className="font-roboto no-underline text-black text-2xl"
-//                                         href={`/habitat/${habitat.pk}`}
-//                                     >
-//                                         {habitat.title}
-//                                     </a>
-//                                     <p className="text-gray-700 mt-2">{habitat.description}</p>
-//                                     <form action={`/habitats/${habitat.pk}`}>
-//                                         <input
-//                                             className="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-//                                             type="submit" value="Подробнее"/>
-//                                     </form>
-//                                 </div>
-//                             </li>
-//                         ))
-//                     ) : (
-//                         <li className="font-roboto text-white">Корзина пуста</li>
-//                     )}
-//                 </ul>
-//             </div>
-//
-//             <div className="flex justify-center">
-//                 <button
-//                     onClick={() => handleDelete(animalId)}
-//                     className="mb-5 w-24 bg-white text-darkred border rounded ml-6 mt-1.5 transition-all duration-500 border-darkred hover:bg-red-600 hover:text-white">
-//                     Удалить
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// }
-//
-// export default AnimalPage;
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Navbar from "./components/Navbar.tsx";
+import Cookies from "js-cookie";
+import Modal from "./components/Modal.tsx";
+import { setCurrentAnimalId, setCurrentCount } from "./redux/habitatsSlice.tsx";
+
+const AnimalPage = () => {
+    const { currentAnimalId, currentCount } = useSelector((state) => state.habitats);
+    const { animalId } = useParams();
+    const [genus, setGenus] = useState('');
+    const [type, setType] = useState('');
+    const [currentHabitats, setCurrentHabitats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [editHabitat, setEditHabitat] = useState(null);
+    const [newPopulation, setNewPopulation] = useState('');
+    const [status, setStatus] = useState('');
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const fetchAnimalData = async () => {
+        try {
+            const response = await fetch(`/api/animal/${animalId}/`);
+            if (!response.ok) throw new Error("Ошибка загрузки данных!");
+            const data = await response.json();
+            setCurrentHabitats(data.habitats);
+            setStatus(data.status);
+            setGenus(data.genus);
+            setType(data.type);
+        } catch (error) {
+            setErrorMessage("Заявка не найдена");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAnimalData();
+    }, [animalId]);
+
+    const updateGenusType = async () => {
+        try {
+            const csrfToken = Cookies.get("csrftoken");
+            const response = await fetch(`/api/animal/${animalId}/`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({ genus, type }),
+            });
+            if (!response.ok) throw new Error("Ошибка при обновлении рода и вида");
+            alert("Род и вид успешно обновлены!");
+        } catch (error) {
+            alert("Не удалось обновить род и вид.");
+            console.error("Ошибка:", error);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            const csrfToken = Cookies.get("csrftoken");
+            const response = await fetch(`/api/delete-animal/${animalId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            });
+            if (response.ok) {
+                dispatch(setCurrentAnimalId(null));
+                dispatch(setCurrentCount(0));
+                navigate("/habitats");
+            } else {
+                alert("Ошибка при удалении заявки");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
+
+    const handleDeleteHabitat = async (habitatId) => {
+        try {
+            const csrfToken = Cookies.get("csrftoken");
+            const response = await fetch(`/api/delete-from-animal/${animalId}/habitat/${habitatId}/`, {
+                method: "DELETE",
+                headers: { "X-CSRFToken": csrfToken },
+            });
+            if (response.ok) {
+                setCurrentHabitats(currentHabitats.filter((habitat) => habitat.pk !== habitatId));
+            } else {
+                alert("Ошибка при удалении места обитания");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
+
+    const handleEditPopulation = (habitatId, currentPopulation) => {
+        setEditHabitat(habitatId);
+        setNewPopulation(currentPopulation);
+        setModalOpen(true);
+    };
+
+    const handleSavePopulation = async () => {
+        try {
+            const csrfToken = Cookies.get("csrftoken");
+            const response = await fetch(`/api/add-population-to-animal/${animalId}/habitat/${editHabitat}/`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({ population: newPopulation }),
+            });
+            if (response.ok) {
+                setCurrentHabitats((prev) =>
+                    prev.map((habitat) =>
+                        habitat.pk === editHabitat ? { ...habitat, population: newPopulation } : habitat
+                    )
+                );
+                setModalOpen(false);
+            } else {
+                alert("Ошибка при обновлении популяции");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
+
+    const handleFormAnimal = async () => {
+        try {
+            const csrfToken = Cookies.get("csrftoken");
+            const response = await fetch(`/api/form-animal/${animalId}/`, {
+                method: "PUT",
+                headers: { "X-CSRFToken": csrfToken },
+            });
+            if (response.ok) {
+                dispatch(setCurrentAnimalId(null));
+                dispatch(setCurrentCount(0));
+                navigate("/habitats");
+            } else {
+                alert("Ошибка при формировании заявки");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
+
+    return (
+        <div className="bg-[#060F1E] font-roboto bg-fixed min-h-screen">
+            <Navbar />
+            <h1 className="text-center font-bold text-5xl text-white mt-12">
+                РЕГИСТРАЦИЯ НОВОГО ВИДА ЖИВОТНОГО
+            </h1>
+            {loading ? (
+                <p className="text-white text-center mt-10">Загрузка...</p>
+            ) : errorMessage ? (
+                <p className="text-red-500 text-center mt-10">{errorMessage}</p>
+            ) : (
+                <div className="flex flex-col items-center mt-12">
+                    {/* Поля для ввода рода и вида */}
+                    <div className="w-2/5 mb-6">
+                        <label className="text-white block mb-2">Род:</label>
+                        <input
+                            type="text"
+                            value={genus}
+                            onChange={(e) => setGenus(e.target.value)}
+                            className="p-2 border rounded w-full"
+                        />
+                        <label className="text-white block mt-4 mb-2">Вид:</label>
+                        <input
+                            type="text"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                            className="p-2 border rounded w-full"
+                        />
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-700"
+                            onClick={updateGenusType}
+                        >
+                            Сохранить изменения
+                        </button>
+                    </div>
+                    <ul className="w-2/5">
+                        {currentHabitats.map((habitat) => (
+                            <li key={habitat.pk} className="bg-white rounded shadow-lg mb-5 flex items-center">
+                                <img src={habitat.picture_url} alt={habitat.title} className="h-48 w-72 rounded" />
+                                <div className="ml-5 flex flex-col">
+                                    <h3 className="text-2xl font-bold">{habitat.title}</h3>
+                                    <p>{habitat.description}</p>
+                                    <p>Популяция: {habitat.population}</p>
+                                    <button
+                                        className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700"
+                                        onClick={() => handleEditPopulation(habitat.pk, habitat.population)}
+                                    >
+                                        Редактировать
+                                    </button>
+                                    <button
+                                        className="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-700"
+                                        onClick={() => handleDeleteHabitat(habitat.pk)}
+                                    >
+                                        Удалить из заявки
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <button
+                        className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-700"
+                        onClick={handleFormAnimal}
+                    >
+                        Сформировать
+                    </button>
+                    <button
+                        className="bg-red-500 text-white px-6 py-3 rounded mt-5 hover:bg-red-700"
+                        onClick={handleDelete}
+                    >
+                        Удалить заявку
+                    </button>
+                </div>
+            )}
+
+            {isModalOpen && (
+                <Modal onClose={() => setModalOpen(false)}>
+                    <h2 className="text-2xl font-bold mb-4">Редактирование популяции</h2>
+                    <input
+                        type="number"
+                        value={newPopulation}
+                        onChange={(e) => setNewPopulation(e.target.value)}
+                        className="p-2 border rounded w-full mb-4"
+                    />
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onClick={handleSavePopulation}
+                    >
+                        Сохранить
+                    </button>
+                </Modal>
+            )}
+        </div>
+    );
+};
+
+export default AnimalPage;

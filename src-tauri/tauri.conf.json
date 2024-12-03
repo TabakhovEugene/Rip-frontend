@@ -1,11 +1,11 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Rip-frontend",
+  "productName": "animals-frontend",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.tauri.animals",
   "build": {
-    "frontendDist": "../build",
-    "devUrl": "http://192.168.96.131:5173",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173/animals-frontend",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },

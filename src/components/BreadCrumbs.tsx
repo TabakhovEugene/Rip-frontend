@@ -15,6 +15,8 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ path }) => {
     // Соответствие между путями и их читаемыми именами
     const pathNames: PathNames = {
         habitats: 'Услуги',
+        animals: 'Заявки',
+        profile: 'Личный кабинет',
         // Добавьте другие соответствия по мере необходимости
     };
 

@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import { setHabitats, setInputValue, setCurrentAnimalId, setCurrentCount } from './redux/habitatsSlice';
 import { Link } from 'react-router-dom';
 import Navbar from "./components/Navbar.tsx";
@@ -7,7 +7,9 @@ import euro from './assets/Евразия.jpg';
 import afro from './assets/Африка.jpg';
 import aust from './assets/Австралия.jpg';
 import korzina from './assets/korzina3.png';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { api } from './api';
 
 interface Habitat {
     pk: number;
@@ -22,63 +24,88 @@ const mockHabitats: Habitat[] = [
 ];
 
 const HabitatsPage = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const { habitats, inputValue, currentAnimalId, currentCount } = useSelector((state) => state.habitats);
     const dispatch = useDispatch();
-    // const [inputValue, setInputValue] = useState('');
-    // const [habitats, setHabitats] = useState(mockHabitats);
-    // const [currentAnimalId, setCurrentAnimalId] = useState(null);
-    // const [currentCount, setCurrentCount] = useState(0);
 
+    // Добавьте состояние авторизации
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const fetchHabitats = async () => {
-        if (habitats.length === 0) {
-            try {
-                const response = await fetch('/api/habitats/');
-                const habitatsData = await response.json();
-                const filteredData = habitatsData.filter((item: { pk: undefined; }) => item.pk !== undefined);
-                const animalIdData = habitatsData.find((item: { draft_request_id: undefined; }) => item.draft_request_id);
-                const animalCountData = habitatsData.find((item: { count: undefined; }) => item.count);
-                dispatch(setHabitats(filteredData));
-                dispatch(setCurrentAnimalId(animalIdData?.draft_request_id || null));
-                dispatch(setCurrentCount(animalCountData?.count || 0));
-            } catch (error) {
-                console.error('Ошибка при загрузке данных мест обитания:', error);
-                dispatch(setHabitats(mockHabitats));
-                dispatch(setCurrentAnimalId(null));
-                dispatch(setCurrentCount(0));
-            }
+        try {
+            const response = await api.habitats.habitatsList();
+            const habitatsData = response.data.filter((item) => item.pk !== undefined);
+            dispatch(setHabitats(habitatsData));
+
+            const animalIdData = response.data.find((item) => item.draft_request_id);
+            const animalCountData = response.data.find((item) => item.count);
+            dispatch(setCurrentAnimalId(animalIdData?.draft_request_id || null));
+            dispatch(setCurrentCount(animalCountData?.count || 0));
+
+            // Если данные содержат информацию об авторизованном пользователе
+            setIsAuthenticated(!!animalIdData);
+        } catch (error) {
+            console.error('Ошибка при загрузке данных МО:', error);
+            dispatch(setHabitats([]));
         }
     };
 
     useEffect(() => {
         fetchHabitats();
-    }, [dispatch, habitats]);
+    }, [dispatch]);
 
     const handleSearch = async (title: { preventDefault: () => void; }) => {
         title.preventDefault();
         try {
-            const response = await fetch(`/api/habitats/?title=${inputValue}`);
-            const result = await response.json();
-            const filteredResult = result.filter((item: { pk: undefined; }) => item.pk !== undefined);
-            dispatch(setHabitats(filteredResult));
+            const response = await api.habitats.habitatsList({
+                title: inputValue,
+            });
+            const filteredHabitats = response.data.filter((item) => item.pk !== undefined);
+            dispatch(setHabitats(filteredHabitats));
         } catch (error) {
             console.error('Ошибка при выполнении поиска:', error);
-            const filteredLocalHabitats = mockHabitats.filter(habitat => {
+
+            const filteredMockHabitats = mockHabitats.filter((habitat) => {
                 const matchesTitle = inputValue
                     ? habitat.title.toLowerCase().includes(inputValue.toLowerCase())
                     : true;
                 return matchesTitle;
             });
-            dispatch(setHabitats(filteredLocalHabitats));
+
+            dispatch(setHabitats(filteredMockHabitats)); // Локальный поиск
         }
+    };
+
+    const handleAddHabitat = async (habitat_id: number) => {
+        try {
+            const csrfToken = Cookies.get('csrftoken');
+            const response = await api.habitats.habitatsAddCreate(habitat_id, {}, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            });
+
+            if (response.status === 201) {
+                const updatedAnimalId = response.data.draft_request_id;
+
+                // Увеличиваем currentCount локально
+                dispatch(setCurrentAnimalId(updatedAnimalId));
+                dispatch(setCurrentCount(currentCount + 1));
+
+                // Удаляем добавленное место обитания из доступных мест
+                dispatch(setHabitats(habitats.filter(habitat => habitat.pk !== habitat_id)));
+            } else {
+                console.error('Ошибка при добавлении МО: неожиданный статус ответа', response.status);
+            }
+        } catch (error) {
+            console.error('Ошибка при добавлении МО:', error);
+        }
+        fetchHabitats();
     };
 
     return (
         <div className="bg-[#060F1E] font-roboto min-h-screen">
-            <Navbar/>
-            <BreadCrumbs path="/habitats"/>
+            <Navbar />
+            <BreadCrumbs path="/habitats" />
             <form onSubmit={handleSearch} className="flex justify-center mb-16 mt-12 space-x-2">
                 <input
                     type="text"
@@ -98,14 +125,20 @@ const HabitatsPage = () => {
                 {habitats.length > 0 ? (
                     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                         {habitats.map((habitat: Habitat) => (
-                            <li key={habitat.pk}
-                                className="shadow-lg transition-all duration-300 rounded-md border m-5 bg-white">
+                            <li key={habitat.pk} className="shadow-lg transition-all duration-300 rounded-md border m-5 bg-white">
                                 <img src={habitat.picture_url} alt={habitat.title}
                                      className="rounded-md w-full h-72 object-cover"
                                 />
                                 <div className="flex justify-center">
                                     <Link to={`/habitats/${habitat.pk}`}
                                           className="no-underline mt-2 text-black text-2xl">{habitat.title}</Link>
+                                </div>
+                                <div className="flex justify-center mt-4">
+                                    <button
+                                        onClick={() => handleAddHabitat(habitat.pk)}
+                                        className="w-full bg-pink-400 text-white py-2 px-6 rounded-md hover:bg-pink-600 transition-all duration-300">
+                                        Добавить в заявку
+                                    </button>
                                 </div>
                             </li>
                         ))}
@@ -114,19 +147,31 @@ const HabitatsPage = () => {
                     <p className="text-white text-xl">Места обитания не найдены</p>
                 )}
             </div>
-            <div className="ml-16 fixed bottom-2.5 right-3">
-                <Link to={`/animal/${currentAnimalId}`} className="pointer-events-none">
-                    <img
-                        className="w-16 h-16 rounded-full bg-purple-300 transition-all duration-500 hover:bg-purple-800"
-                        src={korzina} alt="store icon"/>
-                    <div
-                        className="absolute bottom-0 right-0 inline-block text-center w-6 h-6 rounded-full bg-blue-500 border border-white">
-                        <p className="top-0 w-5.5 h-4 font-roboto text-white font-bold text-md text-center justify-center">{currentCount}</p>
-                    </div>
-                </Link>
-            </div>
+
+            {/* Корзина только для авторизованных пользователей */}
+            {isAuthenticated && (
+                <div className="ml-16 fixed bottom-2.5 right-3">
+                    <Link
+                        to={`/animal/${currentAnimalId}`}
+                        className={currentCount === 0 ? "pointer-events-none" : ""} // Disable click if currentCount is 0
+                    >
+                        <img
+                            className="w-16 h-16 rounded-full bg-purple-300 transition-all duration-500 hover:bg-purple-800"
+                            src={korzina}
+                            alt="store icon"
+                        />
+                        <div
+                            className="absolute bottom-0 right-0 inline-block text-center w-6 h-6 rounded-full bg-blue-500 border border-white"
+                        >
+                            <p className="top-0 w-5.5 h-4 font-roboto text-white font-bold text-md text-center justify-center">
+                                {currentCount}
+                            </p>
+                        </div>
+                    </Link>
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default HabitatsPage;

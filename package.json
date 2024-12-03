@@ -9,13 +9,16 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "generate-api": "node scripts/generate-api.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
     "@tauri-apps/api": "^2.1.1",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.7.8",
     "gh-pages": "^6.2.0",
+    "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",
@@ -24,6 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@tauri-apps/cli": "^2.1.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
@@ -33,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "postcss": "^8.4.47",
+    "swagger-typescript-api": "^13.0.23",
     "tailwindcss": "^3.4.14",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
