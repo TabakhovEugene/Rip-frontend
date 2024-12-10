@@ -1,7 +1,7 @@
 {
   "name": "Дикая природа",
   "short_name": "Дикая природа",
-  "start_url": "/Rip_frontend",
+  "start_url": "/Rip-frontend",
   "display": "standalone",
   "background_color": "#fdfdfd",
   "theme_color": "#db4938",
@@ -9,8 +9,7 @@
   "icons": [
     {
       "src": "/Rip-frontend/icons/logo2.png",
-      "type": "image/png", "sizes": "1920x1920",
-      "form_factor": "wide"
+      "type": "image/png", "sizes": "1920x1920"
     }
   ]
 }
