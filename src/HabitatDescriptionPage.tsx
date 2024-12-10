@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar.tsx";
 import BreadCrumbs from "./components/BreadCrumbs.tsx";
-import euro from './assets/Евразия.jpg';
-import afro from './assets/Африка.jpg';
-import aust from './assets/Австралия.jpg';
+import euro from './assets/2.jpg';
+import afro from './assets/3.jpg';
+import aust from './assets/4.jpg';
 
 interface Habitat {
     id: number;

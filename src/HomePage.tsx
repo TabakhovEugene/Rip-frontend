@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar.tsx";
 
 function HomePage() {
     return (
-        <div className="w-full h-screen bg-cover bg-center bg-[url('./assets/background.jpg')] flex flex-col">
+        <div className="w-full h-screen bg-cover bg-center bg-[url('./assets/back.jpg')] flex flex-col">
             {/* Header */}
             <Navbar />
 

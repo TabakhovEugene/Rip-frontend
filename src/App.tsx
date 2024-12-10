@@ -9,9 +9,6 @@ import RegisterPage from "./RegisterPage.tsx";
 import ProfilePage from "./ProfilePage.tsx";
 import {useEffect} from "react";
 
-
-
-
 function App() {
     useEffect(() => {
         // Check if we're in a Tauri environment

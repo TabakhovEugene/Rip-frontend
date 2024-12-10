@@ -58,7 +58,7 @@ const AnimalsHistoryPage = () => {
                                 <th className="px-4 py-2">Дата создания</th>
                                 <th className="px-4 py-2">Дата формирования</th>
                                 <th className="px-4 py-2">Дата завершения</th>
-                                <th className="px-4 py-2">Модератор</th>
+                                <th className="px-4 py-2">Ученый</th>
                                 <th className="px-4 py-2">Итоговая популяция</th>
                                 <th className="px-4 py-2">Действия</th>
                             </tr>
