@@ -5,4 +5,4 @@
 
 Смежные репозитории:
 - фронтенд (React, Vite) : https://github.com/TabakhovEugene/animals-frontend/
-- бэкенд (Python, Django) : https://github.com/TabakhovEugene/Rip/
+- бэкенд (Python, Django) : https://github.com/TabakhovEugene/animals-backend/
