@@ -272,7 +272,7 @@ export class HttpClient<SecurityDataType = unknown> {
   private format?: ResponseType;
 
   constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "http://127.0.0.1:8000" });
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "http://192.168.30.131:8000" });
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
@@ -366,7 +366,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  * @license BSD License
  * @termsOfService https://www.google.com/policies/terms/
- * @baseUrl http://127.0.0.1:8000
+ * @baseUrl http://192.168.30.131:8000
  * @contact <contact@snippets.local>
  *
  * Test description
@@ -580,7 +580,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     habitatsAddCreate: (
-      id: number,
+      id: string,
+      pk: number,
       data: {
         /**
          * Популяция в данном МО

@@ -30,6 +30,7 @@ const HabitatsPage = () => {
 
     const handleAddHabitat = (habitatId: number) => {
         dispatch(addHabitatToDraft(habitatId));
+        dispatch(fetchHabitats());
     };
 
     return (

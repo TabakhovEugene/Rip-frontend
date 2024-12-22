@@ -7,30 +7,30 @@ import AnimalsHistoryPage from "./AnimalsHistoryPage.tsx";
 import LoginPage from "./LoginPage.tsx";
 import RegisterPage from "./RegisterPage.tsx";
 import ProfilePage from "./ProfilePage.tsx";
-import {useEffect} from "react";
+// import {useEffect} from "react";
 
 function App() {
-    useEffect(() => {
-        // Check if we're in a Tauri environment
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        if (window.__TAURI__) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            const { invoke } = window.__TAURI__.tauri;
-
-            invoke('tauri', { cmd: 'create' })
-                .then((response: never) => console.log(response))
-                .catch((error: never) => console.log(error));
-
-            return () => {
-                invoke('tauri', { cmd: 'close' })
-                    .then((response: never) => console.log(response))
-                    .catch((error: never) => console.log(error));
-            };
-        }
-
-    }, []);
+    // useEffect(() => {
+    //     // Check if we're in a Tauri environment
+    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //     // @ts-expect-error
+    //     if (window.__TAURI__) {
+    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //         // @ts-expect-error
+    //         const { invoke } = window.__TAURI__.tauri;
+    //
+    //         invoke('tauri', { cmd: 'create' })
+    //             .then((response: never) => console.log(response))
+    //             .catch((error: never) => console.log(error));
+    //
+    //         return () => {
+    //             invoke('tauri', { cmd: 'close' })
+    //                 .then((response: never) => console.log(response))
+    //                 .catch((error: never) => console.log(error));
+    //         };
+    //     }
+    //
+    // }, []);
 
     return (
         <BrowserRouter basename="/animals-frontend">

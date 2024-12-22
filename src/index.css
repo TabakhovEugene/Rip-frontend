@@ -17,3 +17,21 @@
 .breadcrumbs span {
     color: white; /* Цвет разделителей */
 }
+
+/* Add this CSS to your global stylesheet or inside a CSS module */
+
+@keyframes bounceLid {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.bounce-on-hover:hover {
+    animation: bounceLid 0.5s ease-in-out;
+}

@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Navbar from "./components/Navbar.tsx";
 import Cookies from "js-cookie";
-import Modal from "./components/Modal.tsx";
-import { setCurrentAnimalId, setCurrentCount } from "./redux/habitatsSlice.tsx";
+import { FaTrashAlt } from "react-icons/fa"; // Importing the trash icon from react-icons
 
 const AnimalPage = () => {
-    const { currentAnimalId, currentCount } = useSelector((state) => state.habitats);
     const { animalId } = useParams();
     const [genus, setGenus] = useState('');
     const [type, setType] = useState('');
     const [currentHabitats, setCurrentHabitats] = useState([]);
+    const [newPopulation, setNewPopulation] = useState('');
+    const [editHabitat, setEditHabitat] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
-    const [editHabitat, setEditHabitat] = useState(null);
-    const [newPopulation, setNewPopulation] = useState('');
     const [status, setStatus] = useState('');
-    const [isModalOpen, setModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -71,8 +68,6 @@ const AnimalPage = () => {
                 },
             });
             if (response.ok) {
-                dispatch(setCurrentAnimalId(null));
-                dispatch(setCurrentCount(0));
                 navigate("/habitats");
             } else {
                 alert("Ошибка при удалении заявки");
@@ -102,7 +97,6 @@ const AnimalPage = () => {
     const handleEditPopulation = (habitatId, currentPopulation) => {
         setEditHabitat(habitatId);
         setNewPopulation(currentPopulation);
-        setModalOpen(true);
     };
 
     const handleSavePopulation = async () => {
@@ -122,7 +116,7 @@ const AnimalPage = () => {
                         habitat.pk === editHabitat ? { ...habitat, population: newPopulation } : habitat
                     )
                 );
-                setModalOpen(false);
+                setEditHabitat(null); // Disable the editing mode
             } else {
                 alert("Ошибка при обновлении популяции");
             }
@@ -139,8 +133,6 @@ const AnimalPage = () => {
                 headers: { "X-CSRFToken": csrfToken },
             });
             if (response.ok) {
-                dispatch(setCurrentAnimalId(null));
-                dispatch(setCurrentCount(0));
                 navigate("/habitats");
             } else {
                 alert("Ошибка при формировании заявки");
@@ -187,28 +179,59 @@ const AnimalPage = () => {
                     </div>
                     <ul className="w-2/5">
                         {currentHabitats.map((habitat) => (
-                            <li key={habitat.pk} className="bg-white rounded shadow-lg mb-5 flex items-center">
-                                <img src={habitat.picture_url} alt={habitat.title} className="h-48 w-72 rounded" />
-                                <div className="ml-5 flex flex-col">
-                                    <h3 className="text-2xl font-bold">{habitat.title}</h3>
-                                    <p>{habitat.description}</p>
-                                    <p>Популяция: {habitat.population}</p>
-                                    <button
-                                        className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700"
-                                        onClick={() => handleEditPopulation(habitat.pk, habitat.population)}
-                                    >
-                                        Редактировать
-                                    </button>
-                                    <button
-                                        className="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-700"
+                            <li
+                                key={habitat.pk}
+                                className="bg-gradient-to-r from-[#1A1D2B] to-[#2C2F3E] text-gray-200 rounded shadow-lg mb-3 flex items-center p-3 hover:from-[#252833] hover:to-[#3A3E50] transition"
+                            >
+                                <img
+                                    src={habitat.picture_url}
+                                    alt={habitat.title}
+                                    className="h-16 w-24 rounded object-cover border-2 border-gray-500 shadow-inner"
+                                />
+                                <div className="ml-3 flex-1">
+                                    <h3 className="text-lg font-semibold truncate text-[#FFD700]">{habitat.title}</h3>
+                                    <p className="text-xs truncate text-gray-300">{habitat.description}</p>
+                                    <div className="flex justify-items-center">
+                                        <p className="text-md font-medium mt-1 text-[#A3E635]">
+                                            Популяция:{" "}
+                                        </p>
+                                        <input
+                                            type="number"
+                                            value={editHabitat === habitat.pk ? newPopulation : habitat.population}
+                                            onChange={(e) => setNewPopulation(e.target.value)}
+                                            className="mt-1 ml-2 p-1 w-20 text-xs rounded"
+                                            disabled={editHabitat !== habitat.pk}
+                                            style={{
+                                                color: editHabitat === habitat.pk ? "black" : "white",
+                                            }}
+                                        />
+                                        {editHabitat === habitat.pk ? (
+                                            <button
+                                                className="mt-1 bg-blue-500 text-white text-xs px-2 py-1 ml-2 rounded"
+                                                onClick={handleSavePopulation}
+                                            >
+                                                Сохранить
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="mt-1 bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white text-xs px-3 py-1 rounded shadow-md hover:from-[#2563EB] hover:to-[#1D4ED8] transition ml-2"
+                                                onClick={() => handleEditPopulation(habitat.pk, habitat.population)}
+                                            >
+                                                Редактировать
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex justify-end ml-3">
+                                    <FaTrashAlt
+                                        className="text-red-500 text-xl cursor-pointer bounce-on-hover"
                                         onClick={() => handleDeleteHabitat(habitat.pk)}
-                                    >
-                                        Удалить из заявки
-                                    </button>
+                                    />
                                 </div>
                             </li>
                         ))}
                     </ul>
+
                     <button
                         className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-700"
                         onClick={handleFormAnimal}
@@ -216,30 +239,12 @@ const AnimalPage = () => {
                         Сформировать
                     </button>
                     <button
-                        className="bg-red-500 text-white px-6 py-3 rounded mt-5 hover:bg-red-700"
+                        className="bg-red-500 text-white px-6 py-3 rounded mt-4 hover:bg-red-700"
                         onClick={handleDelete}
                     >
                         Удалить заявку
                     </button>
                 </div>
-            )}
-
-            {isModalOpen && (
-                <Modal onClose={() => setModalOpen(false)}>
-                    <h2 className="text-2xl font-bold mb-4">Редактирование популяции</h2>
-                    <input
-                        type="number"
-                        value={newPopulation}
-                        onChange={(e) => setNewPopulation(e.target.value)}
-                        className="p-2 border rounded w-full mb-4"
-                    />
-                    <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        onClick={handleSavePopulation}
-                    >
-                        Сохранить
-                    </button>
-                </Modal>
             )}
         </div>
     );

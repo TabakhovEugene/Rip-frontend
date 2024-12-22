@@ -2,13 +2,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../api';
 import Cookies from 'js-cookie';
+import axios from "axios";
 
 // Асинхронный экшен для загрузки мест обитания
 export const fetchHabitats = createAsyncThunk(
     'habitats/fetchHabitats',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.habitats.habitatsList();
+            const response = await axios.get('/api/habitats/');
             const habitats = response.data.filter(item => item.pk !== undefined);
 
             // Извлекаем draft_request_id и count из данных
@@ -49,7 +50,6 @@ export const addHabitatToDraft = createAsyncThunk(
                 headers: { 'X-CSRFToken': csrfToken }
             });
 
-            // const updatedAnimalId = response.data.draft_request_id;
             return { updatedHabitats: response.data };
         } catch (error) {
             return rejectWithValue('Ошибка при добавлении МО');
@@ -71,15 +71,6 @@ const habitatsSlice = createSlice({
     reducers: {
         setInputValue: (state, action) => {
             state.inputValue = action.payload;
-        },
-        setCurrentAnimalId: (state, action) => {
-            state.currentAnimalId = action.payload;
-        },
-        setCurrentCount: (state, action) => {
-            state.currentCount = action.payload;
-        },
-        setHabitats: (state, action) => {
-            state.habitats = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -130,6 +121,6 @@ const habitatsSlice = createSlice({
     },
 });
 
-export const { setInputValue, setCurrentAnimalId, setCurrentCount, setHabitats } = habitatsSlice.actions;
+export const { setInputValue } = habitatsSlice.actions;
 
 export default habitatsSlice.reducer;

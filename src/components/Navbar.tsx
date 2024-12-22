@@ -7,10 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { logout } from "../redux/authSlice.tsx";
-import { setHabitats, setInputValue, setCurrentAnimalId, setCurrentCount } from '../redux/habitatsSlice';
+import { setInputValue} from '../redux/habitatsSlice';
 
 const Navbar = () => {
     const dispatch = useDispatch();
+    const [habitats, setHabitats] = useState([]);
+    const [currentAnimalId, setCurrentAnimalId] = useState(null);
+    const [currentCount, setCurrentCount] = useState(0);
     const navigate = useNavigate();
     const { isAuthenticated, username, avatar } = useSelector((state) => state.auth); // Получаем данные о пользователе из Redux состояния
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,10 +31,10 @@ const Navbar = () => {
                 }
             });
             if (response.status === 204) {
-                dispatch(setHabitats([]));
+                setHabitats([]);
                 dispatch(setInputValue(''));
-                dispatch(setCurrentAnimalId(null));
-                dispatch(setCurrentCount(0));
+                setCurrentAnimalId(null);
+                setCurrentCount(0);
                 dispatch(logout());
                 navigate('/login');
             }
